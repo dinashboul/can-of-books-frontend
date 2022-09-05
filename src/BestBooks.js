@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel';
+import "./book.css"
 class BestBooks extends React.Component {
   constructor(props) {
     super(props);
@@ -28,30 +29,35 @@ class BestBooks extends React.Component {
   render() {
 
     /* TODO: render all the books in a Carousel */
-    return(
-      <div >
-        <h1>Book System</h1>
-        <Carousel slide={true}>
-        {this.state.books.map(item =>{
-          return(
-              <div style={{ width: "400px" , height :"10px"}}>
+    return (
+      <>
+      
+      <Carousel  >
+        {this.state.books.length ? (
+           this.state.books.map((item) => {
+                return(
+                <Carousel.Item >
+                  <img
+                    className="d-block w-100"
+                    src="https://play-lh.googleusercontent.com/DmpYQrVcldrDuz5uyATqGbNvTALsJ1Bg3fpXM0p-VsRNM19osEB9-_ByvdjSbTvZQg=w450-h300-rw"
+                    alt={item.title}
+                  />
+                  <Carousel.Caption>
+                    <h3><p>{item.title}</p></h3>
+                    <p>{item.description}</p>
+                    <p>{item.status}</p>
+                  </Carousel.Caption>
+                </Carousel.Item>
+                )
+              })
            
-               
-               <Carousel.Item interval={500}>
-        <Carousel.Caption>
-        <h3> Books title:{item.title}</h3>
-            <p>{item.description}</p>
-             <p>{item.status}</p>
-        </Carousel.Caption>
-      </Carousel.Item>
-    
-        
-      </div>
-          )
-        })}
-          </Carousel>
-      </div>
-    )
+          
+        ) : (
+          <h3>No Books Found :(</h3>
+        )}
+         </Carousel>
+      </>
+    );
       }
   }
 
