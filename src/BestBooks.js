@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import Carousel from 'react-bootstrap/Carousel';
+// import Carousel from 'react-bootstrap/Carousel';
 import "./book.css"
 class BestBooks extends React.Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class BestBooks extends React.Component {
     }
   }
 
-  /* TODO: Make a GET request to your API to fetch all the books from the database  */
+  
 
   componentDidMount = () => {
     axios
@@ -26,38 +26,70 @@ class BestBooks extends React.Component {
     })
     
   }
+
+  addBook = (event) =>{
+    event.preventDefault();
+    // const catName = event.target.catName.value;
+    // const catBreed = event.target.catBreed.value;
+    const obj = {
+      bookTitle : event.target.bookTitle.value,
+      bookDescription : event.target.bookDescription.value,
+      bookStatus:event.target.bookStatus.value
+    }
+
+    axios
+    .post(`http://localhost:3001/addBook`, obj)
+    .then(result =>{
+      this.setState({
+        books : result.data
+      })
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  }
+
+
+  deleteBook= (id) => {
+    axios
+    .delete(`http://localhost:3001/deleteBook/${id}`) //http://localhost:3010/deleteCat?id=${id}
+    .then(result =>{
+      this.setState({
+        books : result.data
+      })
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  }
+
   render() {
 
-    /* TODO: render all the books in a Carousel */
-    return (
-      <>
-      
-      <Carousel  >
-        {this.state.books.length ? (
-           this.state.books.map((item) => {
-                return(
-                <Carousel.Item >
-                  <img
-                    className="d-block w-100"
-                    src="https://play-lh.googleusercontent.com/DmpYQrVcldrDuz5uyATqGbNvTALsJ1Bg3fpXM0p-VsRNM19osEB9-_ByvdjSbTvZQg=w450-h300-rw"
-                    alt={item.title}
-                  />
-                  <Carousel.Caption>
-                    <h3><p>{item.title}</p></h3>
-                    <p>{item.description}</p>
-                    <p>{item.status}</p>
-                  </Carousel.Caption>
-                </Carousel.Item>
-                )
-              })
-           
-          
-        ) : (
-          <h3>No Books Found :(</h3>
-        )}
-         </Carousel>
-      </>
-    );
+ 
+    return(
+      <div>
+        <h1>Books System</h1>
+        <form onSubmit={this.addBook}>
+          <input type="text" name="bookTitle" placeholder='Book Title' />
+          <input type="text" name="bookDescription" placeholder='Description of Book' />
+          <input type="text" name="bookStatus" placeholder='Status of the Book' />
+          <button type='submit'>Add</button>
+
+        </form>
+        {this.state.books.map(item =>{
+          return(
+            <div>
+              <h3>Book Title  : {item.title} </h3>
+              <p>Book Description: {item.description}</p>
+              <p>Book Status : {item.status}</p>
+
+              <button onClick={() => this.deleteBook(item._id)}>X</button>
+              <p>----------------------------</p>
+            </div>
+          )
+        })}
+      </div>
+    )
       }
   }
 
