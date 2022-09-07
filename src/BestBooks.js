@@ -2,7 +2,12 @@ import React from "react";
 import axios from "axios";
 import UpdateForm from "./UpdateForm";
 import Button from "react-bootstrap/Button";
-import "./style.css"
+import { withAuth0 } from "@auth0/auth0-react";
+import Card from "react-bootstrap/Card";
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+
+import "./style.css";
 import Modalform from "./modal";
 // import Carousel from 'react-bootstrap/Carousel';
 class BestBooks extends React.Component {
@@ -51,13 +56,15 @@ class BestBooks extends React.Component {
 
   addBook = (event) => {
     event.preventDefault();
+    const { user } = this.props.auth0;
 
     const obj = {
       bookTitle: event.target.title.value,
       bookDescription: event.target.description.value,
-      bookStatus:this.state.status,
+      bookStatus: this.state.status,
+      email: user.email,
     };
-    console.log(obj);
+    console.log("my email is", obj);
     axios
       .post(`https://bookapp-backend-frontend.herokuapp.com/addBook`, obj)
       .then((result) => {
@@ -73,7 +80,7 @@ class BestBooks extends React.Component {
 
   deleteBook = (id) => {
     axios
-      .delete(`https://bookapp-backend-frontend.herokuapp.com/deleteBook/${id}`) 
+      .delete(`https://bookapp-backend-frontend.herokuapp.com/deleteBook/${id}`)
       .then((result) => {
         this.setState({
           books: result.data,
@@ -108,11 +115,14 @@ class BestBooks extends React.Component {
     let obj = {
       title: event.target.title.value,
       description: event.target.description.value,
-      status : event.target.status.value
+      status: event.target.status.value,
     };
     const id = this.state.currentBook._id;
     axios
-      .put(`https://bookapp-backend-frontend.herokuapp.com/updateBook/${id}`, obj)
+      .put(
+        `https://bookapp-backend-frontend.herokuapp.com/updateBook/${id}`,
+        obj
+      )
       .then((result) => {
         this.setState({
           books: result.data,
@@ -125,17 +135,20 @@ class BestBooks extends React.Component {
   };
 
   render() {
+    const { user } = this.props.auth0;
+
     return (
       <div>
-        <div id="form">
+        <div  id="form"  >
           <>
             <Button
-              style={{ color: "red" }}
-              variant="dark"
-              size="lg"
+            style={{display: "flex",
+            justifycontent: "center",
+            alignitems: "center"}}
+              class="btn btn-secondary btn-lg"
               onClick={this.handleShow}
             >
-              Add a Book!
+              Add A New Book
             </Button>
 
             <Modalform
@@ -150,19 +163,42 @@ class BestBooks extends React.Component {
           {this.state.books.length ? (
             <div>
               {this.state.books.map((item) => {
+                // if(item.email===user.email){
                 return (
-                  <div style={{ color: "red" }}>
-                    <h3 style={{ color: "#F65A83" }}>{item.title}</h3>
-                    <p>{item.description}</p>
-                    <p>{item.status}</p>
-                    <Button
-                      style={{ color: "#B9005B" }}
-                      variant="dark"
-                      onClick={() => this.deleteBook(item._id)}
-                    >
-                      Delete This Book!
-                    </Button  >
-                    <button onClick={() => this.openForm(item)}>update</button>
+                  <div style={{ color: "blue" }}>
+                    <Row xs={1} md={2} className="g-4">
+                    <Col>
+                    <Card  style={{display:"inline-block" ,width: "18rem" }} variant="success">
+                    <Card.Header>  <h3 style={{ color: "#F65A83" }}>{item.title}</h3></Card.Header>
+                      <Card.Body >
+                        
+                        <Card.Text>
+                         
+                          <p >{item.description}</p>
+                          <p class="bg-info" >{item.status}</p>
+                          <p >{user.email}</p>
+                        </Card.Text>
+                        <Card.Footer className="text-muted"  class="btn-group" role="group" aria-label="Basic example">
+
+                        <Button
+                          class="btn btn-primary btn-lg"
+                          
+                        onClick={() => this.deleteBook(item._id)}
+                        >
+                          Delete This Book
+                        </Button>
+                        <button
+                         class="btn btn-primary btn-lg"
+
+                          onClick={() => this.openForm(item)}
+                        >
+                          update
+                        </button>
+                        </Card.Footer>
+                      </Card.Body>
+                    </Card>
+                    </Col>
+                    </Row>
                     <UpdateForm
                       showFlag={this.state.showFlag}
                       handleCloseUpdate={this.handleCloseUpdate}
@@ -183,4 +219,4 @@ class BestBooks extends React.Component {
   }
 }
 
-export default BestBooks;
+export default withAuth0(BestBooks);

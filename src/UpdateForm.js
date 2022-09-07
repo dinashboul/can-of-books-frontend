@@ -10,9 +10,9 @@ class UpdateForm extends React.Component {
     return (
       <Modal show={this.props.showFlag} onHide={this.props.handleCloseUpdate}>
         <Modal.Header closeButton>
-          <Modal.Title>Update Book</Modal.Title>
+          <Modal.Title style={{color:"red"}}>Update Book</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{background:"#ffb3b3"}}>
           <Form onSubmit={this.props.updateBook}>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Book Title</Form.Label>
@@ -43,13 +43,14 @@ class UpdateForm extends React.Component {
                 <option value="Reccomended To Me">Reccomended To Me</option>
               </Form.Select>
             </Form.Group>
-            <Button variant="primary" type="submit"   >
+            <Button class="btn btn-primary btn-lg" type="submit"   >
               update
             </Button>
-            <Modal.Footer>
-          <Button variant="secondary" onClick={this.props.handleCloseUpdate}>
+            <Button class="btn btn-primary btn-lg" onClick={this.props.handleCloseUpdate}>
             Close
           </Button>
+            <Modal.Footer>
+         
         </Modal.Footer>
           </Form>
         </Modal.Body>
