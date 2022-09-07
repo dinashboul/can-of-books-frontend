@@ -8,11 +8,11 @@ class Modalform extends React.Component {
 
 render(){
     return (
-        <Modal show={this.props.show} onHide={this.props.handleClose}>
+        <Modal show={this.props.show} onHide={this.props.handleClose} >
         <Modal.Header closeButton>
           <Modal.Title style={{color:"red"}}>Add A New Book </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{background:"#ffb3b3"}}>
           <Form onSubmit={this.props.addBook}>
             <Form.Group className="mb-4">
               <Form.Label style={{color:"aqua"}}>Book Title</Form.Label>
@@ -40,16 +40,15 @@ render(){
                 <option value="Reccomended To Me">Reccomended To Me</option>
               </Form.Select>
             </Form.Group>
-            <Button variant="secondary" type="submit"  style={{color:"red"}}>
+            <Button  class="btn btn-primary btn-lg" type="submit"  style={{color:"red"}}>
               Add Book Now!
             </Button>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={this.props.handleClose}>
+            <Button  class="btn btn-primary btn-lg" onClick={this.props.handleClose}>
             Close
           </Button>
-        </Modal.Footer>
+          </Form>
+          
+        </Modal.Body>
       </Modal>
     );
   }
