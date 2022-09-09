@@ -32,11 +32,7 @@ class App extends React.Component {
               element={isAuthenticated &&  <Profile />}
             >
             </Route>
-            <Route 
-              exact path="/HelloMessage"
-              element={isAuthenticated &&  <HelloMessage />}
-            >
-            </Route>
+            
             {/* PLACEHOLDER: add a route with a path of '/about' that renders the `About` component */}
           </Routes>
           <Footer />

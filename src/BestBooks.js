@@ -2,15 +2,15 @@ import React from "react";
 import axios from "axios";
 import UpdateForm from "./UpdateForm";
 import Button from "react-bootstrap/Button";
-import { withAuth0 } from "@auth0/auth0-react";
+import { withAuth0 } from '@auth0/auth0-react';
 import Card from "react-bootstrap/Card";
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
-import "./style.css";
 import Modalform from "./modal";
-// import Carousel from 'react-bootstrap/Carousel';
+
 class BestBooks extends React.Component {
+  
   constructor(props) {
     super(props);
     this.state = {
@@ -19,12 +19,17 @@ class BestBooks extends React.Component {
       books: [],
       showFlag: false,
       currentBook: {},
+      
     };
   }
 
   componentDidMount = () => {
+    const { user } = this.props.auth0;
+  
     axios
-      .get(`https://bookapp-backend-frontend.herokuapp.com/books`)
+      .get(
+        `https://backend-lab15.herokuapp.com/books?email=${user.email}`
+      )
       .then((result) => {
         console.log(result.data);
         this.setState({
@@ -57,21 +62,23 @@ class BestBooks extends React.Component {
   addBook = (event) => {
     event.preventDefault();
     const { user } = this.props.auth0;
-
+    console.log("the email is ",user.email);
     const obj = {
       bookTitle: event.target.title.value,
       bookDescription: event.target.description.value,
-      bookStatus: this.state.status,
       email: user.email,
+      bookStatus: this.state.status,
+      
     };
-    console.log("my email is", obj);
     axios
-      .post(`https://bookapp-backend-frontend.herokuapp.com/addBook`, obj)
+      .post(`https://backend-lab15.herokuapp.com/addBook`, obj)
       .then((result) => {
+        console.log(result.data);
         return this.setState({
           books: result.data,
         });
       })
+      
       .catch((err) => {
         console.log(err);
       });
@@ -79,8 +86,10 @@ class BestBooks extends React.Component {
   };
 
   deleteBook = (id) => {
+    const { user } = this.props.auth0;
+
     axios
-      .delete(`https://bookapp-backend-frontend.herokuapp.com/deleteBook/${id}`)
+      .delete(`https://backend-lab15.herokuapp.com/deleteBook/${id}?email=${user.email}`)
       .then((result) => {
         this.setState({
           books: result.data,
@@ -112,15 +121,18 @@ class BestBooks extends React.Component {
 
   updateBook = (event) => {
     event.preventDefault();
+    const { user } = this.props.auth0;
+
     let obj = {
       title: event.target.title.value,
       description: event.target.description.value,
       status: event.target.status.value,
+      email: user.email,
     };
     const id = this.state.currentBook._id;
     axios
       .put(
-        `https://bookapp-backend-frontend.herokuapp.com/updateBook/${id}`,
+        `https://backend-lab15.herokuapp.com/updateBook/${id}?email=${user.email}`,
         obj
       )
       .then((result) => {
@@ -135,19 +147,13 @@ class BestBooks extends React.Component {
   };
 
   render() {
-    const { user } = this.props.auth0;
+    // const { user } = this.props.auth0;
 
     return (
       <div>
-        <div  id="form"  >
+        <div id="form">
           <>
-            <Button
-            style={{display: "flex",
-            justifycontent: "center",
-            alignitems: "center"}}
-              class="btn btn-secondary btn-lg"
-              onClick={this.handleShow}
-            >
+            <Button class="btn btn-secondary btn-lg" onClick={this.handleShow}>
               Add A New Book
             </Button>
 
@@ -162,43 +168,49 @@ class BestBooks extends React.Component {
         <div>
           {this.state.books.length ? (
             <div>
+              <Row xs={1} md={3} className="g-4">
               {this.state.books.map((item) => {
-                // if(item.email===user.email){
                 return (
                   <div style={{ color: "blue" }}>
-                    <Row xs={1} md={2} className="g-4">
-                    <Col>
-                    <Card  style={{display:"inline-block" ,width: "18rem" }} variant="success">
-                    <Card.Header>  <h3 style={{ color: "#F65A83" }}>{item.title}</h3></Card.Header>
-                      <Card.Body >
-                        
-                        <Card.Text>
-                         
-                          <p >{item.description}</p>
-                          <p class="bg-info" >{item.status}</p>
-                          <p >{user.email}</p>
-                        </Card.Text>
-                        <Card.Footer className="text-muted"  class="btn-group" role="group" aria-label="Basic example">
-
-                        <Button
-                          class="btn btn-primary btn-lg"
+                   
+                      <Col>
+                        <Card
                           
-                        onClick={() => this.deleteBook(item._id)}
+                          variant="success"
                         >
-                          Delete This Book
-                        </Button>
-                        <button
-                         class="btn btn-primary btn-lg"
-
-                          onClick={() => this.openForm(item)}
-                        >
-                          update
-                        </button>
-                        </Card.Footer>
-                      </Card.Body>
-                    </Card>
-                    </Col>
-                    </Row>
+                          <Card.Header>
+                            
+                            <h3 style={{ color: "#F65A83" }}>{item.title}</h3>
+                          </Card.Header>
+                          <Card.Body>
+                            <Card.Text>
+                              <p>{item.description}</p>
+                              <p class="bg-info">{item.status}</p>
+                              <p>Email: {item.email}</p>
+                            </Card.Text>
+                            <Card.Footer
+                              className="text-muted"
+                              class="btn-group"
+                              role="group"
+                              aria-label="Basic example"
+                            >
+                              <Button
+                                class="btn btn-primary btn-lg"
+                                onClick={() => this.deleteBook(item._id)}
+                              >
+                                Delete This Book
+                              </Button>
+                              <button
+                                class="btn btn-primary btn-lg"
+                                onClick={() => this.openForm(item)}
+                              >
+                                update
+                              </button>
+                            </Card.Footer>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    
                     <UpdateForm
                       showFlag={this.state.showFlag}
                       handleCloseUpdate={this.handleCloseUpdate}
@@ -209,9 +221,10 @@ class BestBooks extends React.Component {
                   </div>
                 );
               })}
+              </Row>
             </div>
           ) : (
-            <h3>No Books Found :(</h3>
+            <h3>No Books </h3>
           )}
         </div>
       </div>
