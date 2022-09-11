@@ -35,9 +35,9 @@ render(){
               <Form.Label>Status</Form.Label>
               <Form.Select style={{color:"red"}} onChange={this.props.handleOnChange}>
               <option>Choose a Status</option>
-                <option value="Life Changing">Life Changing</option>
-                <option value="Favorite Five">Favorite Five</option>
-                <option value="Reccomended To Me">Reccomended To Me</option>
+                <option value="historical novel">historical novel</option>
+                <option value="scientific novel">scientific novel</option>
+                <option value="Emotional novel">Emotional novel</option>
               </Form.Select>
             </Form.Group>
             <Button  class="btn btn-primary btn-lg" type="submit"  style={{color:"red"}}>
